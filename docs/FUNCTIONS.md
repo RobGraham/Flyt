@@ -84,6 +84,8 @@ Use the each function to manipulate all of the elements in the current collectio
 
 	.each(callback(function))
 
+<br/>
+
 	_f("div").each(function(e){
 		doSomething
 	})
