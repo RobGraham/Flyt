@@ -17,7 +17,7 @@ Return the id attribute of the first element in the set of matched elements.
 <br/>
 
 ## .html() ##
-For each of the elements in a collection, update it's containing html with user specified value.
+For each of the elements in a collection, update it's containing html with user specified value. If no value is passed, then it will return the HTML of the first element in the collection.
 
 	.html(htmlValue(string))
 
