@@ -180,8 +180,9 @@
 
 				curClassSet, // our current class set
 
-				// When flag is set true, lets set the elements class, otherwise
-			  	// we're left with empty class attributes on all elements;
+				// When flag is set true, lets set the elements class attribute, otherwise
+			  	// we're left with empty class attributes on all elements, which
+			  	// we don't want.
 				flag; 
 
 			// HTML5 classList Support
@@ -430,14 +431,16 @@
 
 		},
 
-		children: function( elem ) {
+		children: function() {
 
+			// Return the children of the first element in the collection
 			return new Flyt( this.el[0].children );
 
 		},
 
 		parent: function() {
 
+			// Return the parent of the first element in the collection
 			return new Flyt( this.el[0].parentNode );
 		}
 
