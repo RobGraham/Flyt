@@ -40,10 +40,15 @@
 			// used throughout Flyt.
 			this.el = this.toArray(elem);
 
-		} else {
-			// else Object is passed
-			this.el = this.toArray(selector);
+		} else if (selector.nodeName) {
 
+			// Single Node element
+			this.el = [selector];
+
+		} else {
+
+			// else Object/Array is passed
+			this.el = this.toArray(selector);
 		}
 
 		// Set a length to the object;
@@ -67,7 +72,7 @@
 		// Getter and Setter attributes
 		attr: function (attr, val){
 			
-			if(!attr || typeof attr !== "string" || typeof val !== "string") return;
+			if(!attr || typeof attr !== "string") return;
 
 			// If attribute name and value passed, we're setting
 			// new attribute values
@@ -80,6 +85,7 @@
 				})
 
 			} else {
+
 				// Return requested attribute value from first element of collection
 				return this.el[0].getAttribute(attr);
 
@@ -94,9 +100,12 @@
 		},
 
 		html: function (html){
-			
-			if(!html) return;
 
+			// If no HMTL has been passed, return the HTML of the first
+			// element in the collection.
+			if(!html) return this.el[0].innerHTML;
+
+			// Otherwise replace the HTML for each element in the collection
 			this.each(function(el){
 
 				el.innerHTML = html;
@@ -118,7 +127,7 @@
 				arr[i] = obj[i];
 
 			}
-
+			
 			return arr;
 
 		},
@@ -263,11 +272,15 @@
 
 			this.addRemoveClass(className); 
 
+			return this;
+
 		},
 
 		removeClass: function(className){ 
 
-			this.addRemoveClass(className, true);	
+			this.addRemoveClass(className, true);
+
+			return this;
 
 		},
 
@@ -279,7 +292,9 @@
 
 				el.innerHTML += html;
 
-			})
+			});
+
+			return this;
 
 		},
 
@@ -291,7 +306,9 @@
 
 				el.innerHTML = html += el.innerHTML;
 
-			})
+			});
+
+			return this;
 
 		},
 
@@ -308,7 +325,9 @@
 
 				}
 
-			})
+			});
+
+			return this;
 
 		},
 
@@ -316,11 +335,15 @@
 
 			this.each( function(el) { el.style.display = "none"; } )
 
+			return this;
+
 		},
 
 		show: function(){
 
 			this.each( function(el) { el.style.display = "block"; } )
+
+			return this;
 		},
 
 		width: function(){
@@ -384,6 +407,14 @@
 				el.addEventListener(type, callback);
 
 			})
+
+		},
+
+		find: function(selector) {
+
+			if(!selector && typeof selector !== "string") return;
+			
+			return new Flyt(this.el[0].querySelectorAll(selector));
 
 		}
 

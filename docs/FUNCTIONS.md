@@ -102,3 +102,12 @@ For example, we can initiate a click event.
 	_f("#logo").event("click", function(e){
 		e.doSomething;
 	})
+
+<br/>
+
+## .find() ##
+To use find, chain it off of an initial flyt selector, and pass in the element you'd like to find.
+
+	_f("div").find("img")
+
+This will return all images found in the first div element. Future iterations may include a full list of all images in all divs. 
