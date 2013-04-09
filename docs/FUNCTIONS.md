@@ -111,3 +111,10 @@ To use find, chain it off of an initial flyt selector, and pass in the element y
 	_f("div").find("img")
 
 This will return all images found in the first div element. Future iterations may include a full list of all images in all divs. 
+
+<br/>
+
+## .eq() ##
+The eq function stands for equals. It's used to get an element by its index in the current collection. For example, if we had 5 divs in our flyt object, and we wanted to get the second one in the collection, one would use:
+
+	_f("div").eq(1);

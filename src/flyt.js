@@ -1,14 +1,18 @@
 /*!
- * Flyt Javascript Framework v2.1.3 by Rob Graham
+ * Flyt Javascript Framework v1.6.1 by Rob Graham
  * http://www.rfgraham.net/
  *
  * Copyright 2013 rfgraham.net and other contributors
  * Released under the MIT license
  *
- * Date: Sat April 6 2013 10:26:33 GMT-0800 (Pacific Standard Time)
+ * Date: Sat April 9 2013 1:11:12 GMT-0800 (Pacific Standard Time)
  */
 
-(function(){
+(function(window){
+
+	// Use the correct document
+	var document = window.document,
+		location = window.location;
 
 	// Our Flyt Class
 	function Flyt(selector) {
@@ -19,10 +23,9 @@
 		if ( !selector ) {
 
 			return this;
-			
+
 		}
 
-		
 		// return a new flyt object if we're in the wrong scope
 		if(window === this) {
 
@@ -60,11 +63,11 @@
 		// with the support of HTML5 classList, lets use this as a feature
 		// test to see if we're running on IE10 or greater. This way we can 
 		// utilize it's performance.
-		this.hasClassList = 'classList' in document.createElement('p');
+		this.hasClassList = document.createElement('p').hasOwnProperty('classList');
 		
 		return this;
 		
-	};
+	}
 
 	// Start supported functions
 	Flyt.prototype = {
@@ -78,9 +81,9 @@
 			// new attribute values
 			if(attr && val) {
 
-				this.each(function(el){ 
+				this.each(function(el){
 
-					el.setAttribute(attr, val)
+					el.setAttribute(attr, val);
 
 				})
 
@@ -122,9 +125,9 @@
 
 				i = 0;
 
-			for (i = obj.length >>> 0; i--;) {
+			for ( ; i < obj.length; i++) {
 
-				arr[i] = obj[i];
+				arr.push(obj[i]);
 
 			}
 			
@@ -140,7 +143,7 @@
 			// HTML5 classList Support
 			if(this.hasClassList) {
 				// return first element if in collection
-				return this.el[0].classList.contains(className)
+				return this.el[0].classList.contains(className);
 
 			} else {
 
@@ -153,7 +156,6 @@
 
 			}
 			
-
 		},
 
 		// Our add and remove classes function.
@@ -224,7 +226,7 @@
 						for(; i < classesLength; i++) {
 
 							// IE8 doesn't support a trim() method so we must resort to regex to trim classes[i]
-							_class = classes[i].replace(/^\s+|\s+$/g, '')
+							_class = classes[i].replace(/^\s+|\s+$/g, '');
 							
 							pattern = new RegExp('(\\s|^)' + _class + '(\\s|$)');
 							
@@ -414,8 +416,29 @@
 
 			if(!selector && typeof selector !== "string") return;
 			
+			// Find all instances of the requested element type in the
+			// first element in a collection and return a new instance
+			// of flyt.
 			return new Flyt(this.el[0].querySelectorAll(selector));
 
+		},
+
+		eq: function(index){
+
+			// Return the selected index of an element in current collection
+			return new Flyt(this.el[index]);
+
+		},
+
+		children: function( elem ) {
+
+			return new Flyt( this.el[0].children );
+
+		},
+
+		parent: function() {
+
+			return new Flyt( this.el[0].parentNode );
 		}
 
 	};
@@ -463,4 +486,4 @@
 	// Expose flyt to the window
 	window._f = window.flyt = Flyt;
 
-})()
+})(window)

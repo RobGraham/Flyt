@@ -26,6 +26,15 @@ or
 
 	_f("div").el[0] (returns first element)
 
+<br/>
+
+## Chaining ##
+Flyt allows you to chain functions together for cleaner code. Some of those functions would be css(), hide(), show(), html(), addClass etc.
+
+So, if one wished to change the html and class of a particular div in a collection, you could write:
+
+	_f("div").eq(4).html("New Content").addClass("hello");
+
 
 <br/>
 
