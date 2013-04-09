@@ -26,6 +26,8 @@ or
 
 	_f("div").el[0] (returns first element)
 
+This will return the nodeList. You cannot chain Flyt functions to this elements directly. If you wish to, you must use the .eq() function.
+
 <br/>
 
 ## Chaining ##
