@@ -118,3 +118,17 @@ This will return all images found in the first div element. Future iterations ma
 The eq function stands for equals. It's used to get an element by its index in the current collection. For example, if we had 5 divs in our flyt object, and we wanted to get the second one in the collection, one would use:
 
 	_f("div").eq(1);
+
+<br/>
+
+## .children() ##
+The children function will return all of the child elements of the currently selected element, or the first element in the collection. 
+
+	_f("div").children();
+
+<br/>
+
+## .parent() ##
+The parent function will return the currently selected elements parent node, or the first element in the collection. 
+
+	_f("div").parent();
