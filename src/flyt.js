@@ -1,11 +1,11 @@
 /*!
- * Flyt Javascript Framework v1.6.1 by Rob Graham
+ * Flyt Javascript Framework v1.6.2 by Rob Graham
  * http://www.rfgraham.net/
  *
  * Copyright 2013 rfgraham.net and other contributors
  * Released under the MIT license
  *
- * Date: Sat April 9 2013 1:11:12 GMT-0800 (Pacific Standard Time)
+ * Date: Sat April 10 2013 10:32:12 GMT-0800 (Pacific Standard Time)
  */
 
 (function(window){
@@ -63,7 +63,7 @@
 		// with the support of HTML5 classList, lets use this as a feature
 		// test to see if we're running on IE10 or greater. This way we can 
 		// utilize it's performance.
-		this.hasClassList = document.createElement('p').hasOwnProperty('classList');
+		this.hasClassList = "classList" in document.createElement('p');
 		
 		return this;
 		
@@ -158,15 +158,19 @@
 			
 		},
 
+		// INTERNAL USE ONLY
 		// Our add and remove classes function.
 		// No point creating two complete addClass and removeClass.
 		// DRY!
-		addRemoveClass: function(className, removingClass){
+		addRemoveClass: function(className, removingClass, toggle){
 
 			if(!className || typeof className !== "string") return; 
 
 			// If set true, we're removing class names
 			removingClass = removingClass || false;
+
+			// If true, we're toggling the passed className
+			toggle = toggle || false;
 
 			// Check if we're passing in multiple values;
 			var classes = className.split(","),
@@ -194,15 +198,23 @@
 
 						for(; i < classesLength; i++) { 
 
+							_class = classes[i].trim();
+
 							if(removingClass) {
 
-								el.classList.remove( classes[i].trim());
+								el.classList.toggle( _class );
+
+								continue;
+
+							}  else if (toggle) {
+
+								el.classList.toggle( _class );
 
 								continue;
 
 							} else {
 
-								el.classList.add( classes[i].trim());
+								el.classList.add( _class );
 
 							}
 							
@@ -238,6 +250,22 @@
 								
 								// Start storing the new class set	
 								curClassSet = curClassSet.replace(pattern, "");
+
+								flag = true;
+
+							} else if (toggle) {
+				
+								if(pattern.test(curClassSet)) {
+
+									// Start storing the new class set	
+									curClassSet = curClassSet.replace(pattern, "");
+
+								} else {
+
+									// append our class
+									curClassSet += " " + _class;
+
+								}
 
 								flag = true;
 
@@ -282,6 +310,14 @@
 		removeClass: function(className){ 
 
 			this.addRemoveClass(className, true);
+
+			return this;
+
+		},
+
+		toggle: function(className) {
+
+			this.addRemoveClass(className, false, true);
 
 			return this;
 
