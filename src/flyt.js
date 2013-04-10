@@ -1,11 +1,11 @@
 /*!
- * Flyt Javascript Framework v1.6.2 by Rob Graham
+ * Flyt Javascript Framework v1.4.2 by Rob Graham
  * http://www.rfgraham.net/
  *
  * Copyright 2013 rfgraham.net and other contributors
  * Released under the MIT license
  *
- * Date: Sat April 10 2013 10:32:12 GMT-0800 (Pacific Standard Time)
+ * Date: Sat April 10 2013 4:37:12 GMT-0800 (Pacific Standard Time)
  */
 
 (function(window){
@@ -31,27 +31,40 @@
 
 			return new Flyt(selector);
 
-		}
+		}	
 
-		// We're in the correct object scope. Initialize our elements array.
-		// If class/id/tag string is passed.
-		if (typeof selector === "string") {
+		// Start detecting what type of selector/object was passed
+		switch (true) {
 
-			elem = document.querySelectorAll(selector);
+			// We're in the correct object scope. Initialize our elements array.
+			// If class/id/tag string is passed.
+			case typeof selector === "string":
 
-			// this.el is the array container for all Nodes
-			// used throughout Flyt.
-			this.el = this.toArray(elem);
+				elem = document.querySelectorAll(selector);
 
-		} else if (selector.nodeName) {
+				this.el = this.toArray(elem);
 
-			// Single Node element
-			this.el = [selector];
+				break;
 
-		} else {
+			// Single Node element passed
+			case selector.nodeName:
+				
+				this.el = [selector];
 
-			// else Object/Array is passed
-			this.el = this.toArray(selector);
+				break;
+
+			// NodeList is passed, feature detection
+			case "item" in selector:
+
+				this.el = this.toArray(selector);
+
+				break;
+
+			// Array was passed
+			default:
+
+				this.el = selector;
+
 		}
 
 		// Set a length to the object;
@@ -64,8 +77,9 @@
 		// test to see if we're running on IE10 or greater. This way we can 
 		// utilize it's performance.
 		this.hasClassList = "classList" in document.createElement('p');
-		
-		return this;
+			
+		// Return Flyt instance.
+		return this; 
 		
 	}
 
@@ -123,9 +137,11 @@
 
 			var arr = [],
 
+				objL = obj.length,
+
 				i = 0;
 
-			for ( ; i < obj.length; i++) {
+			for ( ; i < objL; i++) {
 
 				arr.push(obj[i]);
 
@@ -193,37 +209,32 @@
 			if(this.hasClassList) {
 
 				this.each(function(el){
-					
-					try{
 
-						for(; i < classesLength; i++) { 
+					for(; i < classesLength; i++) { 
 
-							_class = classes[i].trim();
+						_class = classes[i].trim();
 
-							if(removingClass) {
+						if(removingClass) {
 
-								el.classList.toggle( _class );
+							el.classList.remove( _class );
 
-								continue;
+							continue;
 
-							}  else if (toggle) {
+						}  else if (toggle) {
 
-								el.classList.toggle( _class );
+							el.classList.toggle( _class );
 
-								continue;
+							continue;
 
-							} else {
+						} else {
 
-								el.classList.add( _class );
+							el.classList.add( _class );
 
-							}
-							
 						}
+						
+					}
 
-						i = 0; // reset counter
-
-					} catch(e){}
-					
+					i = 0; // reset counter					
 
 				})
 				
@@ -234,64 +245,60 @@
 					// Store all class values for current element.
 					curClassSet = el.className;
 
-					try{
+					for(; i < classesLength; i++) {
 
-						for(; i < classesLength; i++) {
+						// IE8 doesn't support a trim() method so we must resort to regex to trim classes[i]
+						_class = classes[i].replace(/^\s+|\s+$/g, '');
+						
+						pattern = new RegExp('(\\s|^)' + _class + '(\\s|$)');
+						
+						if(removingClass) {
 
-							// IE8 doesn't support a trim() method so we must resort to regex to trim classes[i]
-							_class = classes[i].replace(/^\s+|\s+$/g, '');
+							// If no match, lets skip to the next iteration
+							if(!pattern.test(curClassSet)) continue;
 							
-							pattern = new RegExp('(\\s|^)' + _class + '(\\s|$)');
-							
-							if(removingClass) {
+							// Start storing the new class set	
+							curClassSet = curClassSet.replace(pattern, "");
 
-								// If no match, lets skip to the next iteration
-								if(!pattern.test(curClassSet)) continue;
-								
+							flag = true;
+
+						} else if (toggle) {
+			
+							if(pattern.test(curClassSet)) {
+
 								// Start storing the new class set	
 								curClassSet = curClassSet.replace(pattern, "");
 
-								flag = true;
-
-							} else if (toggle) {
-				
-								if(pattern.test(curClassSet)) {
-
-									// Start storing the new class set	
-									curClassSet = curClassSet.replace(pattern, "");
-
-								} else {
-
-									// append our class
-									curClassSet += " " + _class;
-
-								}
-
-								flag = true;
-
 							} else {
-
-								// If there is already the class name present, skip
-								if(pattern.test(curClassSet)) continue;
 
 								// append our class
 								curClassSet += " " + _class;
 
-								flag = true;
-
 							}
-							
+
+							flag = true;
+
+						} else {
+
+							// If there is already the class name present, skip
+							if(pattern.test(curClassSet)) continue;
+
+							// append our class
+							curClassSet += " " + _class;
+
+							flag = true;
+
 						}
+						
+					}
 
-						// Set the elements class attribute with the new values
-						if(flag) el.setAttribute("class", curClassSet);
+					// Set the elements class attribute with the new values
+					if(flag) el.setAttribute("class", curClassSet);
 
-						// reset
-						curClassSet = flag = null; 
+					// reset
+					curClassSet = flag = null; 
 
-						i = 0;
-
-					} catch(e){}
+					i = 0;
 
 				})
 
@@ -452,11 +459,18 @@
 		find: function(selector) {
 
 			if(!selector && typeof selector !== "string") return;
+				
+			var found = [];
+
+			// Find all instances of the requested query from the collection.
+			// Store all Nodes into an array to be passed as a new instance of Flyt.
+			this.each(function(el){
+	
+				found.push.apply( found, Flyt.prototype.toArray(el.querySelectorAll(selector)) ) 
+
+			})
 			
-			// Find all instances of the requested element type in the
-			// first element in a collection and return a new instance
-			// of flyt.
-			return new Flyt(this.el[0].querySelectorAll(selector));
+			return new Flyt(found);
 
 		},
 
@@ -469,15 +483,33 @@
 
 		children: function() {
 
-			// Return the children of the first element in the collection
-			return new Flyt( this.el[0].children );
+			var found = [];
+
+			// Find all children of elements in the collection, join all found 
+			// NodeLists in an array and return a new instance of Flyt.
+			this.each(function(el){
+	
+				found.push.apply( found, Flyt.prototype.toArray(el.children) ) 
+
+			})
+			
+			return new Flyt(found);
 
 		},
 
 		parent: function() {
 
-			// Return the parent of the first element in the collection
-			return new Flyt( this.el[0].parentNode );
+			var found = [];
+
+			// Find all direct parents of elements in the collection 
+			// and return a new instance of Flyt.
+			this.each(function(el){
+	
+				found.push( el.parentNode ) 
+
+			})
+			
+			return new Flyt(found);
 		}
 
 	};
@@ -498,9 +530,7 @@
 
 			method = options.method || "GET", // GET / POST
 
-			async = options.async || true,
-
-			response;
+			async = options.async || true;
 
 
 		con = new XMLHttpRequest();
@@ -509,16 +539,13 @@
 
 			if (con.readyState==4 && con.status==200) {
 
-				reponse = con.responseText;
-
+				console.log(con.responseText);
 			}
 
 		}
 
-		con.open(method, url, async);
-		con.send();
-
-		return response;
+		con.open(method, url+"?"+data, async);
+		con.send();		
 
 	};
 
