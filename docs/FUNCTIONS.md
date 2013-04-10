@@ -117,7 +117,7 @@ To use find, chain it off of an initial flyt selector, and pass in the element y
 
 	_f("div").find("img")
 
-This will return all images found in the first div element. Future iterations may include a full list of all images in all divs. 
+This will return all images found in all divs. 
 
 <br/>
 
@@ -129,13 +129,13 @@ The eq function stands for equals. It's used to get an element by its index in t
 <br/>
 
 ## .children() ##
-The children function will return all of the child elements of the currently selected element, or the first element in the collection. 
+The children function will return all of the child elements of the collection. 
 
 	_f("div").children();
 
 <br/>
 
 ## .parent() ##
-The parent function will return the currently selected elements parent node, or the first element in the collection. 
+The parent function will return all parent elements in the collection.
 
 	_f("div").parent();
