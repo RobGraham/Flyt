@@ -44,6 +44,13 @@ Pass in a single class name or a comma delimited string to remove all matched cl
 
 <br/>
 
+## .toggle() ##
+Pass in a single class name or a comma delimited string to toggle all matched classes in the elements collection. 
+
+	.removeClass(className1,className2(string))
+
+<br/>
+
 ## .append() ##
 Add HTML to the end of each element in the collection. 
 
