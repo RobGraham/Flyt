@@ -47,8 +47,8 @@
 				break;
 
 			// Single Node element passed
-			case selector.nodeName:
-				
+			case "nodeName" in selector:
+
 				this.el = [selector];
 
 				break;
