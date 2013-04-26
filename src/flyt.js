@@ -555,68 +555,6 @@
 
 	};
 
-
-	// WARNING: Unfinished and untested 
-	Flyt.ajax = function(options){
-
-		// If nothing was passed, or options isn't an object
-		if(!options || typeof options !== "object") return;
-
-		var con, // Connection
-
-			url = options.url || document.location, // address or current page 
-
-			data = options.data || "", // Data to send
-
-			type = options.type || "xml", // Content type
-
-			method = options.method || "GET", // GET / POST
-
-			async = options.async || true;
-
-
-		con = new XMLHttpRequest();
-
-		con.onreadystatechange = function() {
-
-			if (con.readyState==4 && con.status==200) {
-
-				console.log(success(con.responseText));
-
-			} else {
-
-				console.log(error(con.responseText));
-
-			}
-
-		}
-
-		if(options.data) { 
-
-			con.open(method, url+"?"+data, async);
-
-		} else {
-
-			con.open(method, url, async);
-
-		}
-
-		con.send();
-
-		function success(response){
-
-			return "Success: " + response;
-
-		}
-
-		function error(response){
-
-			return "Failed: " + response;
-
-		}
-
-	};
-
 	// Expose flyt to the window
 	window._f = window.flyt = Flyt;
 
