@@ -348,6 +348,7 @@
 
 		},
 
+		// Add HTML or Text before the specified elements
 		before: function(html) {
 
 			this.insertHTML("beforebegin", html);
@@ -356,6 +357,7 @@
 
 		},
 
+		// Add HTML or Text after the specified elements
 		after: function(html) {
 
 			this.insertHTML("afterend", html);
@@ -364,6 +366,7 @@
 
 		},
 
+		// The HTML lifter for append, prepend, before and after
 		insertHTML: function(where, html) {
 
 			if(!(html && where)) return;
@@ -375,7 +378,7 @@
 			});
 
 		},
-
+		
 		css: function(styles){
 			// CSS styles must be passed in an object {"color":"blue"}
 			if(!styles || typeof styles !== "object") return;
