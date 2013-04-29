@@ -666,6 +666,14 @@
 			})
 			
 			return new Flyt(found);
+		},
+
+		contains: function(element){
+
+			if(!element || element.nodeType !== 1) return;
+
+			return this.el[0].contains(element);
+
 		}
 
 	};

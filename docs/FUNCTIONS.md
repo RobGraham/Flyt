@@ -19,7 +19,7 @@ Return the id attribute of the first element in the set of matched elements.
 ## .html() ##
 For each of the elements in a collection, update it's containing html with user specified value. If no value is passed, then it will return the HTML of the first element in the collection.
 
-	.html(htmlValue(string))
+	.html(htmlValue(string or element))
 
 <br/>
 
@@ -54,14 +54,14 @@ Pass in a single class name or a comma delimited string to toggle all matched cl
 ## .append() ##
 Add HTML to the end of each element in the collection. 
 
-	.append(html(string))
+	.append(html(string or element))
 
 <br/>
 
 ## .prepend() ##
 Add HTML to the beginning of each element in the collection. 
 
-	.prepend(html(string))
+	.prepend(html(string or element))
 
 <br/>
 
@@ -69,7 +69,7 @@ Add HTML to the beginning of each element in the collection.
 ## .after() ##
 Add HTML after each element in the collection. 
 
-	.after(html(string))
+	.after(html(string or element))
 
 <br/>
 
@@ -77,7 +77,7 @@ Add HTML after each element in the collection.
 ## .before() ##
 Add HTML before each element in the collection. 
 
-	.before(html(string))
+	.before(html(string or element))
 
 <br/>
 >
