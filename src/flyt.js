@@ -1,11 +1,11 @@
 /*!
- * Flyt Javascript Framework v2.1.7 by Rob Graham
+ * Flyt Javascript Framework v2.2.0 by Rob Graham
  * http://www.rfgraham.net/
  *
  * Copyright 2013 rfgraham.net and other contributors
  * Released under the MIT license
  *
- * Date: Sat April 24 2013 1:53:40 GMT-0800 (Pacific Standard Time)
+ * Date: Sat April 29 2013 1:46:40 GMT-0800 (Pacific Standard Time)
  */
 
 (function(window){
@@ -113,21 +113,6 @@
 		id: function(){
 			// Support only the first element in our element collection
 			return this.el[0].id;
-
-		},
-
-		html: function (html){
-
-			// If no HMTL has been passed, return the HTML of the first
-			// element in the collection.
-			if(!html) return this.el[0].innerHTML;
-
-			// Otherwise replace the HTML for each element in the collection
-			this.each(function(){
-
-				this.innerHTML = html;
-
-			})
 
 		},
 
@@ -332,6 +317,19 @@
 
 		},
 
+		html: function (html){
+
+			// If no HMTL has been passed, return the HTML of the first
+			// element in the collection.
+			if(!html) return this.el[0].innerHTML;
+
+			// Otherwise replace the HTML for each element in the collection
+			this.insertHTML("innerHTML", html);
+
+			return this;
+
+		},
+
 		append: function(html){
 
 			this.insertHTML("beforeend", html);
@@ -369,14 +367,137 @@
 		// The HTML lifter for append, prepend, before and after
 		insertHTML: function(where, html) {
 
+			// if no html string or node and location are passed, return;
 			if(!(html && where)) return;
 
-			this.each(function(i, el){
+			// If our html variable is a string, use native functions
+			// to add our text/html
+			if(typeof html === "string") {
 
-				el.insertAdjacentHTML(where, html);
+				// innerHTML relates to our html() function call
+				if(where === "innerHTML") {
 
-			});
+					this.each(function(i, el){
 
+						el.innerHTML = html;
+
+					})
+
+				} else {
+
+					// Leverage native positioning function
+					// before, after, append, prepend types.
+					this.each(function(i, el){
+
+						el.insertAdjacentHTML(where, html);
+
+					});
+
+				}
+
+			// An HTML node was passed	
+			} else if (html.nodeType === 1) {
+
+				switch(where) {
+
+					case "innerHTML":
+
+						this.each(function(i, el){
+
+							// Check to see if what we're trying to insert is
+							// already a child of the element. If so lets clone it
+							// and insert, otherwise it will be deleted during
+							// the process
+							if(el.contains(html)) {
+
+								// We must clear the elements current HTML
+								el.innerHTML = "";
+
+								// Add the HTML replacement
+								el.appendChild(html.cloneNode(true));
+
+							}  else {
+
+								// We must clear the elements current HTML
+								el.innerHTML = "";
+
+								// Add the HTML replacement
+								el.appendChild(html);
+
+							}
+
+						})
+
+					break;
+
+					// Append
+					case "beforeend":
+
+						this.each(function(i, el){
+
+							el.appendChild(html);
+
+						})
+
+					break;
+
+					// Before
+					case "beforebegin":
+
+						this.each(function(i, el){
+
+							if(el.parentNode) {
+							
+								el.parentNode.insertBefore(html, el);
+							
+							}
+
+						})
+
+					break;
+
+					// Prepend
+					case "afterbegin":
+
+						this.each(function(i, el){
+							
+							var child = el.firstChild;
+
+							// If we have a first child in our element, insert our html
+							// before that child, otherwise we have no children so just append
+							// a new child with our html.
+							child ? el.insertBefore(html, child) : el.appendChild(html);
+
+						})
+
+					break;
+
+					// After
+					case "afterend":
+
+						this.each(function(i, el){
+							
+							var parent = el.parentNode;
+
+							//if the parents lastchild is the target element
+							if(parent.lastChild == el) {
+								//add the new element after the target element.
+								parent.appendChild(html);
+
+							} else {
+								// else the target has siblings, insert the new element between the target and it's next sibling.
+								parent.insertBefore(html, el.nextSibling);
+
+							}
+							
+						})
+
+					break;
+
+				}
+
+			}
+			
 		},
 		
 		css: function(styles){
