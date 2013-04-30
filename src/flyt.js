@@ -601,6 +601,8 @@
 
 			})
 
+			return this;
+
 		},
 
 		// Find all elements that match the passed selector
@@ -686,10 +688,10 @@
 			var cloned = [];
 
 			this.each(function(i,el){
-
+	
 				cloned.push(el.cloneNode(true));
 
-				el.parentNode.remove(el);
+				el.parentNode.removeChild(el);
 
 			})
 
