@@ -10,7 +10,7 @@ striving for performance with minimal overhead are going to love what Flyt has t
 More is not always better, and the goal with Flyt is to keep it minimalistic without sacrificing functionality.
 This will always be the goal of Flyt. 
 
-**Minified Flyt is less than 4kb! Compared to jQuery, over 100kb.**
+**Minified Flyt is less than 5kb! Compared to jQuery, over 100kb.**
 
 <br/>
 
