@@ -1,5 +1,5 @@
 /*!
- * Flyt Javascript Framework v2.2.0 by Rob Graham
+ * Flyt Javascript Framework v2.2.1 by Rob Graham
  * http://www.rfgraham.net/
  *
  * Copyright 2013 rfgraham.net and other contributors
@@ -608,12 +608,12 @@
 		find: function(selector) {
 
 			if(!selector && typeof selector !== "string") return;
-				
+			
 			var found = [];
 
 			// Find all instances of the requested query from the collection.
 			// Store all Nodes into an array to be passed as a new instance of Flyt.
-			this.each(function(i,el){
+			this.each(function(i,el) {
 	
 				found.push.apply( 
 
@@ -668,11 +668,73 @@
 			return new Flyt(found);
 		},
 
+		// Native contains function to check if the element
+		// passed is a child of the first element in our collection
+		// true / false
 		contains: function(element){
 
 			if(!element || element.nodeType !== 1) return;
 
 			return this.el[0].contains(element);
+
+		},
+
+		// Remove the elements from the DOM but clone them
+		// and return the new Flyt collection for manipulation
+		detach: function(){
+
+			var cloned = [];
+
+			this.each(function(i,el){
+
+				cloned.push(el.cloneNode(true));
+
+				el.parentNode.remove(el);
+
+			})
+
+			return new Flyt(cloned);
+
+		},
+
+		// Remove the element(s) from the DOM
+		remove: function( selector ) {
+
+			// If we've passed a selector, find the elements within
+			// our current collection, otherwise we're removing all 
+			// elements in our collection
+			var elems = selector ? this.find(selector).el : this.el;
+
+				len = elems.length;
+
+				i = 0;
+
+			for ( ; i<len; i++ ) {
+				
+				if ( elems[i].parentNode ) {
+
+					elems[i].parentNode.removeChild( elems[i] );
+
+					// Future improvements to be added to remove the instance
+					// from our Flyt collection for garbage collection. 
+
+				}
+
+			}
+
+		},
+
+		// Return first element in the collection
+		first: function(){
+
+			return new Flyt(this.el[0]);
+
+		},
+
+		// Return last element in the collection
+		last: function(){
+
+			return new Flyt(this.el[this.length-1]);
 
 		}
 

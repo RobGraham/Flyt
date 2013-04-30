@@ -148,9 +148,8 @@ For example, we can initiate a click event.
 ## .find() ##
 To use find, chain it off of an initial flyt selector, and pass in the element you'd like to find.
 
-	_f("div").find("img")
-
-This will return all images found in all divs. 
+	_f("div").find(selector(string))
+ 
 
 <br/>
 
@@ -172,3 +171,39 @@ The children function will return all of the child elements of the collection.
 The parent function will return all parent elements in the collection.
 
 	_f("div").parent();
+
+<br/>
+
+## .contains() ##
+Checks the first element, if in a collection, to see if the element passed is a descendant.
+
+	_f("div").contains(element);
+
+<br/>
+
+## .detach() ##
+Remove the elements from the DOM but clone them and return the a new Flyt collection with these cloned elements for manipulation. Great for minimizing reflow when making multiple changes to elements.
+
+	_f("div").detach();
+
+<br/>
+
+## .remove() ##
+Remove the elements from the DOM. Removes the whole collection or pass in a selector to only remove selector matches.
+
+	_f("div").remove(selector(string));
+
+
+<br/>
+
+## .first() ##
+Returns the first element in the collection
+
+	_f("div").first();
+
+<br/>
+
+## .last() ##
+Returns the last element in the collection
+
+	_f("div").last();
