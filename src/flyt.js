@@ -1,11 +1,11 @@
 /*!
- * Flyt Javascript Framework v2.2.1 by Rob Graham
+ * Flyt Javascript Framework v2.3.0 by Rob Graham
  * http://www.rfgraham.net/
  *
  * Copyright 2013 rfgraham.net and other contributors
  * Released under the MIT license
  *
- * Date: Sat April 29 2013 1:46:40 GMT-0800 (Pacific Standard Time)
+ * Date: Sat May 9 2013 2:41:40 GMT-0800 (Pacific Standard Time)
  */
 
 (function(window){
@@ -31,10 +31,6 @@
 
 		}
 
-		// The exposed "el" property is our element storage in which we
-		// will keep an array of DOM Nodes. 
-		this.el = null;
-
 		// Start detecting what type of selector/object was passed
 		switch (true) {
 
@@ -42,36 +38,37 @@
 			// If class/id/tag string is passed.
 			case typeof selector === "string":
 
-				this.el = this.toArray(document.querySelectorAll(selector));
+				this.toArray(document.querySelectorAll(selector));
 
 				break;
 
 			// Single Node element passed, feature detection
 			case "nodeName" in selector:
 
-				this.el = [selector];
+				this[0] = selector;
+
+				// Set a length to the object;
+				this.length = 1
+
+				// Bool for testing if we're dealing with more than 1 element (collection). 
+				this.group = false;
 
 				break;
 
 			// NodeList is passed, feature detection
 			case "item" in selector:
 
-				this.el = this.toArray(selector);
+				this.toArray(selector);
 
 				break;
 
 			// Array was passed
 			default:
 
-				this.el = selector;
+				this.toArray(selector);
 
 		}
 
-		// Set a length to the object;
-		this.length = this.el.length;
-
-		// Bool for testing if we're dealing with more than 1 element (collection). 
-		this.group = this.length > 1;
 
 		// with the support of HTML5 classList, lets use this as a feature
 		// test to see if we're running on IE10 or greater. This way we can 
@@ -104,7 +101,7 @@
 			} else {
 
 				// Return requested attribute value from first element of collection
-				return this.el[0].getAttribute(attr);
+				return this[0].getAttribute(attr);
 
 			}
 
@@ -112,7 +109,7 @@
 
 		id: function(){
 			// Support only the first element in our element collection
-			return this.el[0].id;
+			return this[0].id;
 
 		},
 
@@ -120,19 +117,21 @@
 		// changing NodeList's into array collections.
 		toArray: function (obj) {
 
-			var arr = [],
-
 				objL = obj.length,
 
 				i = 0;
 
 			for ( ; i < objL; i++) {
 
-				arr.push(obj[i]);
+				this[i] = obj[i];
 
 			}
 			
-			return arr;
+			// Set a length to the object;
+			this.length = objL;
+
+			// Bool for testing if we're dealing with more than 1 element (collection). 
+			this.group = objL > 1;
 
 		},
 
@@ -144,14 +143,14 @@
 			// HTML5 classList Support
 			if(this.hasClassList) {
 				// return first element if in collection
-				return this.el[0].classList.contains(className);
+				return this[0].classList.contains(className);
 
 			} else {
 
 				// IE<10
 				var pattern = new RegExp('(\\s|^)' + className + '(\\s|$)'),
 					// return first element if in collection
-					result = pattern.test(this.el[0].className);
+					result = pattern.test(this[0].className);
 
 				return result; 
 
@@ -321,7 +320,7 @@
 
 			// If no HMTL has been passed, return the HTML of the first
 			// element in the collection.
-			if(!html) return this.el[0].innerHTML;
+			if(!html) return this[0].innerHTML;
 
 			// Otherwise replace the HTML for each element in the collection
 			this.insertHTML("innerHTML", html);
@@ -370,6 +369,12 @@
 			// if no html string or node and location are passed, return;
 			if(!(html && where)) return;
 
+			if(html instanceof flyt) {
+
+				html = this.joinFlytElements(html);
+
+			}
+
 			// If our html variable is a string, use native functions
 			// to add our text/html
 			if(typeof html === "string") {
@@ -395,8 +400,8 @@
 
 				}
 
-			// An HTML node was passed	
-			} else if (html.nodeType === 1) {
+			// An HTML node or nodeList was passed	
+			} else if (html.nodeType === 1 || html.length) {
 
 				switch(where) {
 
@@ -404,25 +409,15 @@
 
 						this.each(function(i, el){
 
-							// Check to see if what we're trying to insert is
-							// already a child of the element. If so lets clone it
-							// and insert, otherwise it will be deleted during
-							// the process
-							if(el.contains(html)) {
+							// More than 1 element
+							var mt1 = i > 0;
 
-								// We must clear the elements current HTML
-								el.innerHTML = "";
+							// We must clear the elements current HTML
+							el.innerHTML = "";
 
-								// Add the HTML replacement
-								el.appendChild(html.cloneNode(true));
+							for(var k = 0; k < html.length; k++) {
 
-							}  else {
-
-								// We must clear the elements current HTML
-								el.innerHTML = "";
-
-								// Add the HTML replacement
-								el.appendChild(html);
+								mt1 ? el.appendChild(html[k].cloneNode(true)) : el.appendChild(html[k]);
 
 							}
 
@@ -435,7 +430,14 @@
 
 						this.each(function(i, el){
 
-							el.appendChild(html);
+							// More than 1 element
+							var mt1 = i > 0;
+
+							for(var k = 0; k < html.length; k++) {
+							
+								mt1 ? el.appendChild(html[k].cloneNode(true)) : el.appendChild(html[k]);
+
+							}
 
 						})
 
@@ -446,10 +448,17 @@
 
 						this.each(function(i, el){
 
+							// More than 1 element
+							var mt1 = i > 0;
+
 							if(el.parentNode) {
+								
+								for(var k = 0; k < html.length; k++) {
 							
-								el.parentNode.insertBefore(html, el);
-							
+									mt1 ? el.parentNode.insertBefore(html[k].cloneNode(true), el) : el.parentNode.insertBefore(html[k], el);
+
+								}
+								
 							}
 
 						})
@@ -463,10 +472,29 @@
 							
 							var child = el.firstChild;
 
-							// If we have a first child in our element, insert our html
-							// before that child, otherwise we have no children so just append
-							// a new child with our html.
-							child ? el.insertBefore(html, child) : el.appendChild(html);
+							// More than 1 element
+							mt1 = i > 0;
+								
+							for(var k = 0; k < html.length; k++) {
+						
+								if(mt1 && child) {
+
+									// If we have a first child in our element, insert our html
+									// before that child, otherwise we have no children so just append
+									// a new child with our html.
+									el.insertBefore(html[k].cloneNode(true), child);
+
+								} else if (child){
+									
+									 el.insertBefore(html[k], child);
+
+								} else {
+
+									el.appendChild(html[k]);
+
+								}
+
+							}
 
 						})
 
@@ -477,17 +505,30 @@
 
 						this.each(function(i, el){
 							
-							var parent = el.parentNode;
+							var parent = el.parentNode,
+
+							// More than 1 element
+							mt1 = i > 0;
 
 							//if the parents lastchild is the target element
 							if(parent.lastChild == el) {
 								//add the new element after the target element.
-								parent.appendChild(html);
 
+								for(var k = 0; k < html.length; k++) {
+							
+									mt1 ? parent.appendChild(html[k].cloneNode(true)) : parent.appendChild(html[k]);
+
+								}
+								
 							} else {
 								// else the target has siblings, insert the new element between the target and it's next sibling.
-								parent.insertBefore(html, el.nextSibling);
 
+								for(var k = 0; k < html.length; k++) {
+							
+									mt1 ? parent.insertBefore(html[k].cloneNode(true), el.nextSibling) : parent.insertBefore(html[k], el.nextSibling);
+
+								}
+								
 							}
 							
 						})
@@ -498,6 +539,22 @@
 
 			}
 			
+		},
+
+		joinFlytElements: function(instance) {
+
+			var arr = [],
+
+				i = 0;
+
+			for ( ; i < instance.length; i++) {
+
+				arr.push(instance[i])
+
+			};
+
+			return arr;
+
 		},
 		
 		css: function(styles){
@@ -539,7 +596,7 @@
 			if(this.group) return;
 
 			// Otherwise, return the elements full width.
-			return this.el[0].offsetWidth;
+			return this[0].offsetWidth;
 
 		},
 
@@ -548,7 +605,7 @@
 			if(this.group) return;
 
 			// Otherwise, return the elements full height.
-			return this.el[0].offsetHeight;
+			return this[0].offsetHeight;
 
 		},
 
@@ -556,7 +613,7 @@
 		each: function(callback){
 			// our forEach initiation passing our element collection
 			// and user callback function.
-			return this.forEach( this.el, callback );
+			return this.forEach( this, callback );
 
 		},
 
@@ -565,12 +622,10 @@
 
 			var value,
 				
-				i = 0,
-				
-				length = obj.length;
+				i = 0;
 
 			// Iterate over each object member
-			for ( ; i < length; i++ ) {	
+			for ( ; i < this.length; i++ ) {	
 
 				// Fire our callback function if provided
 				value = callback.call(obj[ i ], i, obj[ i ] );
@@ -633,8 +688,10 @@
 		// index number passed.
 		eq: function(index){
 
+			if(!index) return;
+
 			// Return the selected index of an element in current collection
-			return new Flyt(this.el[index]);
+			return new Flyt(this[index]);
 
 		},
 
@@ -677,7 +734,7 @@
 
 			if(!element || element.nodeType !== 1) return;
 
-			return this.el[0].contains(element);
+			return this[0].contains(element);
 
 		},
 
@@ -705,7 +762,7 @@
 			// If we've passed a selector, find the elements within
 			// our current collection, otherwise we're removing all 
 			// elements in our collection
-			var elems = selector ? this.find(selector).el : this.el;
+			var elems = selector ? this.find(selector).el : this;
 
 				len = elems.length;
 
@@ -729,14 +786,14 @@
 		// Return first element in the collection
 		first: function(){
 
-			return new Flyt(this.el[0]);
+			return new Flyt(this[0]);
 
 		},
 
 		// Return last element in the collection
 		last: function(){
 
-			return new Flyt(this.el[this.length-1]);
+			return new Flyt(this[this.length-1]);
 
 		}
 
