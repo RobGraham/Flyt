@@ -18,15 +18,15 @@ You can pass this collection to a new flyt instance to take advantage of the fun
 
 ## Indexed Elements ##
 What if you wanted to get the stored elements or a specific element in the flyt collection. How would you do this? 
-<br/>Call the "el" property to return the array of elements
+<br/>By simply calling Flyt, it will return an object with all the matching elements as indexed properties.
 
-	_f("div").el (returns the collection)
+	_f("div") (returns the collection)
 
 or 
 
-	_f("div").el[0] (returns first element)
+	_f("div")[0] (returns first element)
 
-This will return the nodeList. You cannot chain Flyt functions to this elements directly. If you wish to, you must use the .eq() function.
+If you do specify an index of the element, as shown in the example above "_f("div")[0]", this will return the element itself. You cannot chain Flyt functions directly in this manner. If you wish to, you must use the .eq() function. To learn more about the eq() function, please read the documentation. 
 
 <br/>
 
