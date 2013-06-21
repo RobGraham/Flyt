@@ -62,6 +62,9 @@
 
 				break;
 
+			// Flyt instance
+			/*case selector instanceof Flyt:*/
+
 			// Array was passed
 			default:
 
